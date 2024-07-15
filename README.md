@@ -1,11 +1,10 @@
-# ChromeStealer
+<div align="center">
+  <h1>ChromeStealer</h1>
+  <br/>
 
-ChromeStealer is a tool for educational purposes to demonstrate how to extract and decrypt stored passwords from Google Chrome on a Windows system using C/C++. This project was created because existing write-ups and C/C++ versions either didn't work or didn't satisfy me enough.
-
----
-
-**ChromeStealer**  
-Created by [@bernKing20](https://x.com/bernKing20)
+  <p><i>ChromeStealer is a tool for educational purposes to demonstrate how to extract and decrypt stored passwords from Google Chrome on a Windows system using C/C++.<br/> Created by <a href="https://x.com/bernKing20">@bernKing20</a>.</i></p>
+  <br />
+</div>
 
 ## Dependencies
 
@@ -57,3 +56,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [nlohmann/json](https://github.com/nlohmann/json)
 - [sqlite3](https://www.sqlite.org/index.html)
 - [How to Hack Chrome Password with Python](https://ohyicong.medium.com/how-to-hack-chrome-password-with-python-1bedc167be3d)
+
+## Contact
+
+For any queries, please contact the author at [your.email@example.com](mailto:your.email@example
