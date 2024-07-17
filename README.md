@@ -44,7 +44,7 @@ This project uses [vcpkg](https://vcpkg.io/) to manage dependencies. Ensure you 
 
 ## Full Write-Up
 
-For a detailed explanation of the project, visit the full write-up at [bernking.com](https://bernking.github.io//2024/chrome-stealer/).
+For a detailed explanation of the project, visit the full write-up at [my blog](https://bernking.github.io//2024/chrome-stealer/).
 
 ## Disclaimer
 
