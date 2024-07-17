@@ -1,11 +1,14 @@
-# ChromeStealer
+<div align="center">
+  <h1>ChromeStealer</h1>
+  <br/>
 
-ChromeStealer is a tool for educational purposes to demonstrate how to extract and decrypt stored passwords from Google Chrome on a Windows system using C/C++. This project was created because existing write-ups and C/C++ versions either didn't work or didn't satisfy me enough.
+  <p><i>ChromeStealer is a tool for educational purposes to demonstrate how to extract and decrypt stored passwords from Google Chrome on a Windows system using C/C++. <br/>Created by <a href="https://x.com/bernKing20">@bernKing20</a>.</i></p>
+  <br />
+</div>
 
----
+## Overview
 
-**ChromeStealer**  
-Created by [@bernKing20](https://x.com/bernKing20)
+ChromeStealer was created because existing write-ups and C/C++ versions either didn't work or didn't satisfy me enough. I hope that the write-up helps other people who were in the same position as me.
 
 ## Dependencies
 
