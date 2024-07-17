@@ -51,6 +51,7 @@ std::wstring FindLocalState() {
 // @return The path to the Login Data file as a wide string.
 std::wstring FindLoginData() {
   WCHAR userProfile[MAX_PATH];
+  //CSIDL_PROFILE macro for USER PROFILE
   HRESULT result = SHGetFolderPathW(NULL, CSIDL_PROFILE, NULL, 0, userProfile);
 
   if (!SUCCEEDED(result)) {
@@ -103,7 +104,7 @@ std::string getEncryptedKey(const std::wstring& localStatePath) {
 // the original key.
 // @param encrypted_key The encrypted key as a Base64-encoded string.
 // @return The decrypted key as a DATA_BLOB structure.
-DATA_BLOB decryptKey(const std::string encrypted_key) {
+DATA_BLOB decryptKey(const std::string& encrypted_key) {
   if (encrypted_key.empty()) {
     warn("Input string is empty.");
     return {};

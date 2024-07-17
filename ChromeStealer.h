@@ -66,7 +66,7 @@ int loginDataParser(const std::wstring& loginDataPath, DATA_BLOB decryptionKey);
 // Decrypts an encrypted key.
 // @param encrypted_key The encrypted key as a string.
 // @return The decrypted key as a DATA_BLOB structure.
-DATA_BLOB decryptKey(const std::string encrypted_key);
+DATA_BLOB decryptKey(const std::string& encrypted_key);
 
 // Decrypts a password using the provided key and initialization vector (IV).
 // @param ciphertext The encrypted password.
