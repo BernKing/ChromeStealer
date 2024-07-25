@@ -319,7 +319,7 @@ int main() {
     "                                Made by Bernking\n"
     "                           For educational purposes only\n"
     "                        Check my GitHub: https://github.com/BernKing\n"
-    "                            Check my blog: [placeholder]\n"
+    "                            Check my blog: https://bernking.github.io/\n"
   );
 
   printf("\n\n");
