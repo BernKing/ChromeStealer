@@ -25,7 +25,7 @@ This project uses [vcpkg](https://vcpkg.io/) to manage dependencies. Ensure you 
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/yourusername/ChromeStealer.git
+    git clone https://github.com/BernKing/ChromeStealer.git
     cd ChromeStealer
     ```
 
